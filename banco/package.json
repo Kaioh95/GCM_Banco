@@ -10,13 +10,20 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "axios": "^1.2.2",
+    "dotenv": "16.0.1",
+    "formik": "^2.2.9",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "styled-components": "^5.3.10"
+    "react-toastify": "9.1.1",
+    "styled-components": "^5.3.10",
+    "yup": "^0.32.11"
   },
   "devDependencies": {
+    "@types/node": "^20.1.4",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
+    "@types/styled-components": "^5.1.26",
     "@typescript-eslint/eslint-plugin": "^5.57.1",
     "@typescript-eslint/parser": "^5.57.1",
     "@vitejs/plugin-react": "^4.0.0",
