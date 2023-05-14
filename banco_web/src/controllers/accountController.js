@@ -117,4 +117,51 @@ const debit = (req, res, next) => {
 
 }
 
-module.exports = {createaccount, credit, debit}
+const transfer = (req, res, next) => {
+
+    const accountId = req.body.accountId
+    const accountId2 = req.body.accountId2
+    const value = req.body.value
+
+    if(!accountId){
+        return res.status(422).json({msg: "Número da conta de origem é obrigatório!"})
+    }    
+    if(!accountId2){
+        return res.status(422).json({msg: "Número da conta de destino é obrigatório!"})
+    }
+    if(!value){
+        return res.status(422).json({msg: "Valor a ser transferido é obrigatório!"})
+    }
+
+    Account.findOne({ accountId }, async (err, account) => {
+        if(err){
+            console.log(err)
+            return sendErrorsDB(res, err)
+        } else if(account){
+            account.balance += value
+            account.balance -= value
+
+            try{
+                const updatedAccount = await Account.findOneAndUpdate(
+                    { _id: account._id },
+                    { $set: account},
+                    { new: true, runValidators: true },
+                )
+    
+                return res.status(200).json({
+                    msg: "Transferência realizada!",
+                    updatedAccount,
+                })
+    
+            } catch(err){
+                res.status(500).json({msg: err})
+            }
+
+        } else {
+            res.status(500).send({msg:"error"})
+        }
+
+    })
+}        
+
+module.exports = {createaccount, credit, debit, transfer}
