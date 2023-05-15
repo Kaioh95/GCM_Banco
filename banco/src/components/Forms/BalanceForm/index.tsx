@@ -3,7 +3,7 @@ import { CustomForm, CustomInput, CustomLabel, FormFooter, SubmitButton, FormErr
 import { useState } from "react";
 import { useRequest } from "../../../hooks/useResquest";
 import { toast } from "react-toastify";
-import * as yup from "yup"
+import { BalanceAccountSchema } from "../../../schemas/BalanceAccountSchema";
 
 interface BalanceValues extends FormikValues{
     accountId: number;
@@ -39,10 +39,10 @@ function BalanceForm(){
         const customErrorMessage = 'Erro ao acessar conta!';
 
         const response = await runRequest<{msg: string}>(
-            '/',
+            `/${data.accountId}`,
             'get',
             undefined,
-            data,
+            undefined,
             headers,
             customErrorMessage
         )
@@ -53,39 +53,39 @@ function BalanceForm(){
             return { success: undefined, error: response }
         }
 
+        console.log(response)
+
         return { success: response.msg, error: undefined }
     }
 
     const formik = useFormik({
         initialValues, 
         onSubmit, 
-        validationSchema: yup.object().shape({
-            accountId: yup.number().required(),
-        })}
+        validationSchema: BalanceAccountSchema}
     );
 
 
     return(
         <FormikProvider value={formik}>
             <CustomForm>
-            <CustomLabel>Número da Conta:</CustomLabel>
-            <Field
-                name='accountId'
-                type='number'
-                placeholder='Digite o número da conta'
-                as={CustomInput}
-            />
-            <ErrorMessage component={FormError} name="title"/>
+                <CustomLabel>Número da Conta:</CustomLabel>
+                <Field
+                    name='accountId'
+                    type='number'
+                    placeholder='Digite o número da conta'
+                    as={CustomInput}
+                />
+                <ErrorMessage component={FormError} name="accountId"/>
 
-            <FormFooter>
-                    <SubmitButton
-                        type="submit"
-                        className={isBalanceLoading? 'disabled' : ''}
-                        disabled={isBalanceLoading}
-                    >
-                        Saldo
-                    </SubmitButton>
-            </FormFooter>
+                <FormFooter>
+                        <SubmitButton
+                            type="submit"
+                            className={isBalanceLoading? 'disabled' : ''}
+                            disabled={isBalanceLoading}
+                        >
+                            Saldo
+                        </SubmitButton>
+                </FormFooter>
             </CustomForm>
         </FormikProvider>
     )

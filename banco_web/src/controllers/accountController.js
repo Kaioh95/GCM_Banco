@@ -29,7 +29,7 @@ const createaccount = (req, res, next) => {
                 if(err){
                     return sendErrorsDB(res, err)
                 } else {
-                    res.status(200).send({ accountId })
+                    res.status(200).send({msg: "Conta Criada!", accountId })
                 }
             })
         }
@@ -116,8 +116,7 @@ const debit = (req, res, next) => {
 
 }
 
-const transfer = (req, res, next) => {
-
+const transfer = async (req, res, next) => {
     const accountIdSrc = req.body.accountIdSrc
     const accountIdDest = req.body.accountIdDest
     const value = req.body.value
@@ -132,21 +131,21 @@ const transfer = (req, res, next) => {
         return res.status(422).json({msg: "Valor a ser transferido é obrigatório!"})
     }
 
-    const accountSrc = Account.findOne({accountIdSrc});
-    const accountDest = Account.findOne({accountIdDest});
+    const accountSrc = await Account.findOne({accountId: accountIdSrc});
+    const accountDest = await Account.findOne({accountId: accountIdDest});
 
     if(!accountSrc){
         return res.status(422).json({msg: "Conta de origem não existe!"})
     }    
     if(!accountDest){
         return res.status(422).json({msg: "Conta de destino não existe!"})
-    } 
+    }
 
     accountSrc.balance -= value;
     accountDest.balance += value;
 
     try{
-        const updatedAccount = await Account.findOneAndUpdate(
+        const updatedAccountSrc = await Account.findOneAndUpdate(
             { _id: accountSrc._id },
             { $set: accountSrc},
             { new: true, runValidators: true },
@@ -157,7 +156,7 @@ const transfer = (req, res, next) => {
     }
 
     try{
-        const updatedAccount = await Account.findOneAndUpdate(
+        const updatedAccountDest = await Account.findOneAndUpdate(
             { _id: accountDest._id },
             { $set: accountDest},
             { new: true, runValidators: true },
@@ -165,7 +164,7 @@ const transfer = (req, res, next) => {
 
         return res.status(200).json({
             msg: "Transferência realizada!",
-            updatedAccount,
+            updatedAccountDest,
         })
       
     } catch(err){
@@ -174,15 +173,14 @@ const transfer = (req, res, next) => {
 
 } 
 
-const getAccount = (req, res, next) => {
+const getAccount = async (req, res, next) => {
+    const id = req.params.id;
 
-    const accountId = req.body.accountId;
-
-    if(!accountId){
+    if(!id){
         return res.status(422).json({msg: "Número da conta é obrigatório!"})
     }    
 
-    const account = Account.findOne({accountId});
+    const account = await Account.findOne({accountId: id});
 
     if(!account){
         return res.status(422).json({msg: "Conta informada não existe!"})
@@ -194,7 +192,7 @@ const getAccount = (req, res, next) => {
     })
 } 
 
-const getAccountAll = (req, res, next) => {
+const getAccountAll = async (req, res, next) => {
     
     const accounts = await Account.find();
 

@@ -41,7 +41,8 @@ function TransferForm(){
     const TransferAccount = async (data: TransferValues, headers: any) => {
         setIsTransferLoading(true);
         const customErrorMessage = 'Erro ao tranferir!';
-
+    
+        console.log(data)
         const response = await runRequest<{msg: string}>(
             '/transferir',
             'patch',
@@ -56,6 +57,8 @@ function TransferForm(){
         if (response instanceof Error){
             return { success: undefined, error: response }
         }
+
+        console.log(response)
 
         return { success: response.msg, error: undefined }
     }
@@ -73,7 +76,7 @@ function TransferForm(){
                 placeholder='Digite o número da conta'
                 as={CustomInput}
             />
-            <ErrorMessage component={FormError} name="accountId"/>
+            <ErrorMessage component={FormError} name="accountIdSrc"/>
 
             <CustomLabel>Número da Conta Destino:</CustomLabel>
             <Field
@@ -82,7 +85,7 @@ function TransferForm(){
                 placeholder='Digite o número da conta'
                 as={CustomInput}
             />
-            <ErrorMessage component={FormError} name="accountId"/>
+            <ErrorMessage component={FormError} name="accountIdDest"/>
 
             <CustomLabel>Valor:</CustomLabel>
             <Field
