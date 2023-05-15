@@ -17,7 +17,6 @@ const createaccount = (req, res, next) => {
         return res.status(400).send({ errors: ['Id inválido!']})
     }
 
-
     Account.findOne({ accountId }, (err, account) => {
         if(err){
             console.log(err)
@@ -173,6 +172,40 @@ const transfer = (req, res, next) => {
         res.status(500).json({msg: err})
     }
 
-}      
+} 
 
-module.exports = {createaccount, credit, debit, transfer}
+const getAccount = (req, res, next) => {
+
+    const accountId = req.body.accountId;
+
+    if(!accountId){
+        return res.status(422).json({msg: "Número da conta é obrigatório!"})
+    }    
+
+    const account = Account.findOne({accountId});
+
+    if(!account){
+        return res.status(422).json({msg: "Conta informada não existe!"})
+    } 
+
+    return res.status(200).json({
+        msg: "Conta encontrada!",
+        account:account,
+    })
+} 
+
+const getAccountAll = (req, res, next) => {
+    
+    const accounts = await Account.find();
+
+    if(!accounts){
+        return res.status(422).json({msg: "Não foram localizadas contas ativas!"})
+    } 
+
+    return res.status(200).json({
+        msg: "Conta encontrada!",
+        accounts:accounts,
+    })
+}    
+
+module.exports = {createaccount, credit, debit, transfer, getAccount, getAccountAll}
