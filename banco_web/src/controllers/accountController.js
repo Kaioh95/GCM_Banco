@@ -47,6 +47,10 @@ const credit = (req, res, next) => {
         return res.status(422).json({msg: "Valor a ser creditado é obrigatório!"})
     }
 
+    if(credits < 0) {
+        return res.status(422).json({msg: "Valor creditado não pode ser negativo!"})
+    }
+
     Account.findOne({ accountId }, async (err, account) => {
         if(err){
             console.log(err)
@@ -87,13 +91,17 @@ const debit = (req, res, next) => {
         return res.status(422).json({msg: "Valor a ser debitado é obrigatório!"})
     }
 
+    if(debits < 0) {
+        return res.status(422).json({msg: "Valor debitado não pode ser negativo!"})
+    }
+
     Account.findOne({ accountId }, async (err, account) => {
         if(err){
             console.log(err)
             return sendErrorsDB(res, err)
         } else if(account){
             if(debits > account.balance){
-                return res.status(422).json({msg: "Saldo insuficiente!"})
+                return res.status(422).json({msg: "Saldo insuficiente para registro do débito!"})
             }
 
             account.balance -= debits
@@ -135,6 +143,10 @@ const transfer = async (req, res, next) => {
         return res.status(422).json({msg: "Valor a ser transferido é obrigatório!"})
     }
 
+    if(value < 0) {
+        return res.status(422).json({msg: "Valor transferido não pode ser negativo!"})
+    }    
+
     const accountSrc = await Account.findOne({accountId: accountIdSrc});
     const accountDest = await Account.findOne({accountId: accountIdDest});
 
@@ -146,7 +158,7 @@ const transfer = async (req, res, next) => {
     }
 
     if(value > accountSrc.balance){
-        return res.status(422).json({msg: "Saldo insuficiente!"})
+        return res.status(422).json({msg: "Saldo insuficiente para realização da transferência!"})
     }
 
     accountSrc.balance -= value;
