@@ -44,7 +44,7 @@ const credit = (req, res, next) => {
         return res.status(422).json({msg: "Número da conta é obrigatório!"})
     }
     if(!credits){
-        return res.status(422).json({msg: "Valor a ser creaditado é obrigatório!"})
+        return res.status(422).json({msg: "Valor a ser creditado é obrigatório!"})
     }
 
     Account.findOne({ accountId }, async (err, account) => {
@@ -92,6 +92,10 @@ const debit = (req, res, next) => {
             console.log(err)
             return sendErrorsDB(res, err)
         } else if(account){
+            if(debits > account.balance){
+                return res.status(422).json({msg: "Saldo insuficiente!"})
+            }
+
             account.balance -= debits
             try{
                 const updatedAccount = await Account.findOneAndUpdate(
@@ -139,6 +143,10 @@ const transfer = async (req, res, next) => {
     }    
     if(!accountDest){
         return res.status(422).json({msg: "Conta de destino não existe!"})
+    }
+
+    if(value > accountSrc.balance){
+        return res.status(422).json({msg: "Saldo insuficiente!"})
     }
 
     accountSrc.balance -= value;
