@@ -10,6 +10,7 @@ import CreditForm from "../../components/Forms/CreditForm";
 import DebitForm from "../../components/Forms/DebitForm";
 import BalanceForm from "../../components/Forms/BalanceForm";
 import TransferForm from "../../components/Forms/TransferForm";
+import BearInterests from "../../components/Forms/BearInterests";
 
 export default function MainPage(){
     const { selected, selectTab, showTabs } = useContext(TabContext)
@@ -19,7 +20,7 @@ export default function MainPage(){
         if(!selected){
             selectTab("createTab")
         }
-        showTabs("createTab", "balanceTab", "creditTab", "debitTab", "transferTab")
+        showTabs("createTab", "balanceTab", "creditTab", "debitTab", "transferTab", "bearTab")
     }, [])
 
     return(
@@ -30,6 +31,7 @@ export default function MainPage(){
                 <TabHeader label="Creditar" icon="" target="creditTab"/>
                 <TabHeader label="Debitar" icon="" target="debitTab"/>
                 <TabHeader label="Transferir" icon="" target="transferTab"/>
+                <TabHeader label="RenderJuros" icon="" target="bearTab"/>
             </TabsHeader>
 
             <TabsContent>
@@ -51,6 +53,10 @@ export default function MainPage(){
 
                 <TabContent id="transferTab">
                     <TransferForm/>
+                </TabContent>
+
+                <TabContent id="bearTab">
+                    <BearInterests/>
                 </TabContent>
             </TabsContent>
         </Tabs>

@@ -1,6 +1,7 @@
-require("dotenv").config()
 const _ = require('lodash')
 const Account = require('../models/Account')
+const BonusAccount = require('../models/BonusAccount')
+const SavingsAccount = require('../models/SavingsAccount')
 
 
 const sendErrorsDB = (res, dbErrors) => {
@@ -9,7 +10,7 @@ const sendErrorsDB = (res, dbErrors) => {
     return res.status(400).send({ errors })
 }
 
-const createaccount = (req, res, next) => {
+const createaccount = async (req, res, next) => {
     const accountId = req.body.accountId || ''
     const balance = req.body.balance || ''
 
@@ -17,26 +18,23 @@ const createaccount = (req, res, next) => {
         return res.status(400).send({ errors: ['Id inválido!']})
     }
 
-    Account.findOne({ accountId }, (err, account) => {
-        if(err){
-            console.log(err)
-            return sendErrorsDB(res, err)
-        } else if(account){
-            return res.status(400).send({errors: ['A conta já existe!']})
-        } else {
-            const newAccount = new Account({ accountId: parseInt(accountId), balance: 0 })
-            newAccount.save(err => {
-                if(err){
-                    return sendErrorsDB(res, err)
-                } else {
-                    res.status(200).send({msg: "Conta Criada!", accountId })
-                }
-            })
-        }
-    })
+    const account = await Account.findOne({ accountId});
+
+    if(account){
+        return res.status(403).send({ errors: ['A Conta já existe!']});
+    }
+
+    try{
+        const newAccount = new Account({ accountId: parseInt(accountId), balance: 0, points: 10});
+        await newAccount.save()
+
+        return res.status(200).json({msg: 'Conta criada!', account: newAccount})
+    } catch(err){
+        return res.status(500).send({ errors: [err]});
+    }
 }
 
-const credit = (req, res, next) => {
+const credit = async (req, res, next) => {
     const accountId = req.body.accountId
     const credits = req.body.credits
 
@@ -51,36 +49,32 @@ const credit = (req, res, next) => {
         return res.status(422).json({msg: "Valor creditado não pode ser negativo!"})
     }
 
-    Account.findOne({ accountId }, async (err, account) => {
-        if(err){
-            console.log(err)
-            return sendErrorsDB(res, err)
-        } else if(account){
-            account.balance += credits
-            try{
-                const updatedAccount = await Account.findOneAndUpdate(
-                    { _id: account._id },
-                    { $set: account},
-                    { new: true, runValidators: true },
-                )
-    
-                return res.status(200).json({
-                    msg: "Crédito realizado!",
-                    updatedAccount,
-                })
-    
-            } catch(err){
-                res.status(500).json({msg: err})
-            }
+    const account = await Account.findOne({ accountId });
 
-        } else {
-            res.status(500).send({msg:"error"})
-        }
-    })
+    if(!account){
+        return res.status(422).json({msg: "A conta não existe!"})
+    }   
+
+    try{
+        account.balance += credits;
+
+        const updatedAccount = await Account.findOneAndUpdate(
+            { _id: account._id },
+            { $set: account},
+            { new: true, runValidators: true },
+        )
+
+        return res.status(200).json({
+            msg: "Crédito realizado!",
+            updatedAccount,
+        })    
+    } catch(err){
+        res.status(500).json({msg: err, errors: [err]})
+    }
 
 }
 
-const debit = (req, res, next) => {
+const debit = async (req, res, next) => {
     const accountId = req.body.accountId
     const debits = req.body.debits
 
@@ -95,43 +89,47 @@ const debit = (req, res, next) => {
         return res.status(422).json({msg: "Valor debitado não pode ser negativo!"})
     }
 
-    Account.findOne({ accountId }, async (err, account) => {
-        if(err){
-            console.log(err)
-            return sendErrorsDB(res, err)
-        } else if(account){
-            if(debits > account.balance){
-                return res.status(422).json({msg: "Saldo insuficiente para registro do débito!"})
-            }
+    const account = await Account.findOne({ accountId });
 
-            account.balance -= debits
-            try{
-                const updatedAccount = await Account.findOneAndUpdate(
-                    { _id: account._id },
-                    { $set: account},
-                    { new: true, runValidators: true },
-                )
-    
-                return res.status(200).json({
-                    msg: "Débito realizado!",
-                    updatedAccount,
-                })
-    
-            } catch(err){
-                res.status(500).json({msg: err})
-            }
+    if(!account){
+        return res.status(422).json({msg: "A conta não existe!"})
+    }   
 
-        } else {
-            res.status(500).send({msg:"error"})
-        }
-    })
+    try{
+        account.balance -= debits;
+        
+        const updatedAccount = await Account.findOneAndUpdate(
+            { _id: account._id },
+            { $set: account},
+            { new: true, runValidators: true },
+        )
 
+        console.log("ASDASDAS")
+        return res.status(200).json({
+            msg: "Débito realizado!",
+            updatedAccount,
+        })    
+    } catch(err){
+        res.status(500).json({msg: err, errors: [err]})
+    }
+
+}
+
+const AccountType = {NORMAL: "NORMAL", BONUS: "BONUS", SAVINGS: "SAVINGS"}
+
+const findUpdate = async (accountModel, dest) => {
+    return await accountModel.findOneAndUpdate(
+        { _id: dest._id },
+        { $set: dest},
+        { new: true, runValidators: true },
+    )
 }
 
 const transfer = async (req, res, next) => {
     const accountIdSrc = req.body.accountIdSrc
     const accountIdDest = req.body.accountIdDest
     const value = req.body.value
+    const destType = req.body.destType
 
     if(!accountIdSrc){
         return res.status(422).json({msg: "Número da conta de origem é obrigatório!"})
@@ -142,13 +140,19 @@ const transfer = async (req, res, next) => {
     if(!value){
         return res.status(422).json({msg: "Valor a ser transferido é obrigatório!"})
     }
-
     if(value < 0) {
         return res.status(422).json({msg: "Valor transferido não pode ser negativo!"})
-    }    
+    }
+    if(!AccountType[destType]){
+        return res.status(422).json({msg: "Informe uma operação válida!"})
+    } 
 
     const accountSrc = await Account.findOne({accountId: accountIdSrc});
-    const accountDest = await Account.findOne({accountId: accountIdDest});
+    const accountDest = destType === AccountType.SAVINGS ?
+        await SavingsAccount.findOne({accountId: accountIdDest}):
+        destType === AccountType.BONUS?
+            await BonusAccount.findOne({accountId: accountIdDest}):
+            await Account.findOne({accountId: accountIdDest});
 
     if(!accountSrc){
         return res.status(422).json({msg: "Conta de origem não existe!"})
@@ -176,11 +180,12 @@ const transfer = async (req, res, next) => {
     }
 
     try{
-        const updatedAccountDest = await Account.findOneAndUpdate(
-            { _id: accountDest._id },
-            { $set: accountDest},
-            { new: true, runValidators: true },
-        )
+        if(destType === AccountType.BONUS){
+            accountDest.points += Math.floor(value / 200);
+            accountDest.points = parseInt(accountDest.points);
+        }
+        const updatedAccountDest = await findUpdate(destType == AccountType.BONUS
+            ? BonusAccount : destType == AccountType.SAVINGS? SavingsAccount : Account , accountDest);
 
         return res.status(200).json({
             msg: "Transferência realizada!",

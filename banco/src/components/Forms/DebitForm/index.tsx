@@ -1,5 +1,5 @@
 import { ErrorMessage, Field, FormikHelpers, FormikProvider, FormikValues, useFormik } from "formik";
-import { CustomForm, CustomInput, CustomLabel, FormFooter, SubmitButton, FormError } from "../styles";
+import { CustomForm, CustomInput, CustomLabel, FormFooter, SubmitButton, FormError, Select } from "../styles";
 import { useState } from "react";
 import { useRequest } from "../../../hooks/useResquest";
 import { toast } from "react-toastify";
@@ -7,7 +7,8 @@ import { DebitSchema } from "../../../schemas/DebitAccount";
 
 interface DebitValues extends FormikValues{
     accountId: number;
-    debits: number
+    debits: number;
+    accountType: string;
 }
 
 function DebitForm(){
@@ -17,6 +18,7 @@ function DebitForm(){
     const initialValues={
         accountId: 0,
         debits: 0,
+        accountType: '',
     }
 
 
@@ -39,9 +41,11 @@ function DebitForm(){
     const DebitAccount = async (data: DebitValues, headers: any) => {
         setIsDebitLoading(true);
         const customErrorMessage = 'Erro ao debitar!';
+        const customURL = data.accountType === "normal" ? "/debito" 
+            : `/${data.accountType}/debito`;
 
         const response = await runRequest<{msg: string}>(
-            '/debito',
+            customURL,
             'patch',
             undefined,
             data,
@@ -81,6 +85,18 @@ function DebitForm(){
                 as={CustomInput}
             />
             <ErrorMessage component={FormError} name="debits"/>
+
+            <Field
+                name='accountType'
+                type='input'
+                as={Select}
+                placeholder='Escolha o tipo de conta!'>
+                <option value="">Selecione o tipo</option>
+                <option value="normal">Normal</option>
+                <option value="bonus">Bônus</option>
+                <option value="poupanca">Poupança</option>
+            </Field>
+            <ErrorMessage component={FormError} name="accountType"/>
 
             <FormFooter>
                     <SubmitButton
