@@ -91,3 +91,9 @@ export const FormError = styled.div`
         visibility: visible;
     }
 `;
+
+export const DivResult = styled.div`
+    color: #00ff00;
+    border: 0;
+    margin: 10px;
+`

@@ -1,5 +1,5 @@
 import { ErrorMessage, Field, FormikHelpers, FormikProvider, FormikValues, useFormik } from "formik";
-import { CustomForm, CustomInput, CustomLabel, FormFooter, SubmitButton, FormError } from "../styles";
+import { CustomForm, CustomInput, CustomLabel, FormFooter, SubmitButton, FormError, DivResult } from "../styles";
 import { useState } from "react";
 import { useRequest } from "../../../hooks/useResquest";
 import { toast } from "react-toastify";
@@ -9,8 +9,15 @@ interface BalanceValues extends FormikValues{
     accountId: number;
 }
 
+type AccountType = {
+    _id: string,
+    accountId: string,
+    balance: string,
+}
+
 function BalanceForm(){
     const [isBalanceLoading, setIsBalanceLoading] = useState(false);
+    const [resultMsg, setResultMsg] = useState<string>("");
     const { runRequest } = useRequest();
 
     const initialValues={
@@ -38,7 +45,7 @@ function BalanceForm(){
         setIsBalanceLoading(true);
         const customErrorMessage = 'Erro ao acessar conta!';
 
-        const response = await runRequest<{msg: string}>(
+        const response = await runRequest<{msg: string, account: AccountType}>(
             `/${data.accountId}`,
             'get',
             undefined,
@@ -54,6 +61,7 @@ function BalanceForm(){
         }
 
         console.log(response)
+        setResultMsg(`Conta: ${response.account.accountId} | Saldo: ${response.account.balance}`)
 
         return { success: response.msg, error: undefined }
     }
@@ -86,6 +94,8 @@ function BalanceForm(){
                             Saldo
                         </SubmitButton>
                 </FormFooter>
+                
+                <DivResult>{resultMsg}</DivResult>
             </CustomForm>
         </FormikProvider>
     )
