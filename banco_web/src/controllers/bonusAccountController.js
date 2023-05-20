@@ -1,21 +1,14 @@
 const BonusAccount = require('../models/BonusAccount');
+const SavingsAccount = require('../models/SavingsAccount');
 const Account = require('../models/Account');
-
-const sendErrorsDB = (res, dbErrors) => {
-    const errors = []
-    _.forIn(dbErrors.errors, error => errors.push(error.message))
-    return res.status(400).send({ errors })
-}
 
 const createAccount = async (req, res, next) => {
     const accountId = req.body.accountId || '';
     const balance = req.body.balance;
     const points = req.body.points;
 
-    try{
-        parseInt(accountId)
-    } catch(err){
-        return res.status(400).send({ errors: ['Id inválido!']});
+    if(!parseInt(accountId)){
+        return res.status(400).send({ errors: ['Id inválido!']})
     }
 
     const bAccount = await BonusAccount.findOne({ accountId});
@@ -151,9 +144,11 @@ const transfer = async (req, res, next) => {
     }    
 
     const accountSrc = await BonusAccount.findOne({accountId: accountIdSrc});
-    const accountDest = destType === AccountType.NORMAL ?
-        await Account.findOne({accountId: accountIdDest}):
-        await BonusAccount.findOne({accountId: accountIdDest});
+    const accountDest = destType === AccountType.SAVINGS ?
+        await SavingsAccount.findOne({accountId: accountIdDest}):
+        destType === AccountType.BONUS?
+            await BonusAccount.findOne({accountId: accountIdDest}):
+            await Account.findOne({accountId: accountIdDest});
 
     if(!accountSrc){
         return res.status(422).json({msg: "Conta de origem não existe!"})
@@ -186,7 +181,7 @@ const transfer = async (req, res, next) => {
             accountDest.points = parseInt(accountDest.points);
         }
         const updatedAccountDest = await findUpdate(destType == AccountType.BONUS
-            ? BonusAccount : Account , accountDest);
+            ? BonusAccount : destType == AccountType.SAVINGS? SavingsAccount : Account , accountDest);
 
         return res.status(200).json({
             msg: "Transferência realizada!",

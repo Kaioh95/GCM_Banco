@@ -2,11 +2,6 @@ const SavingsAccount = require('../models/SavingsAccount');
 const BonusAccount = require('../models/BonusAccount');
 const Account = require('../models/Account');
 
-const sendErrorsDB = (res, dbErrors) => {
-    const errors = []
-    _.forIn(dbErrors.errors, error => errors.push(error.message))
-    return res.status(400).send({ errors })
-}
 
 const createAccount = async (req, res, next) => {
     const accountId = req.body.accountId || '';
@@ -29,7 +24,7 @@ const createAccount = async (req, res, next) => {
         const newSAccount = new SavingsAccount({ accountId: parseInt(accountId), balance: 0, points: 10});
         await newSAccount.save()
 
-        return res.status(200).json({msg: 'Conta bônus criada!', account: newSAccount})
+        return res.status(200).json({msg: 'Conta poupança criada!', account: newSAccount})
     } catch(err){
         return res.status(500).send({ errors: [err]});
     }
@@ -264,7 +259,7 @@ const bearInterest = async(req, res, nest) => {
 
         return res.status(200).json({
             msg: `Rendeu R$ ${interest.toFixed(2)} de juros!`,
-            updatedAccount,
+            account: updatedAccount,
         })    
     } catch(err){
         res.status(500).json({msg: err, errors: [err]})
