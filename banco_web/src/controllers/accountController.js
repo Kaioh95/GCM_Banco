@@ -93,7 +93,12 @@ const debit = async (req, res, next) => {
 
     if(!account){
         return res.status(422).json({msg: "A conta não existe!"})
-    }   
+    }
+
+    const newBalance = account.balance - debits;
+    if(newBalance < -1000){
+        return res.status(422).json({msg: "Saldo insuficiente para realização do saque! (limite de saldo negativo -1000)"})
+    }
 
     try{
         account.balance -= debits;
@@ -104,7 +109,6 @@ const debit = async (req, res, next) => {
             { new: true, runValidators: true },
         )
 
-        console.log("ASDASDAS")
         return res.status(200).json({
             msg: "Débito realizado!",
             updatedAccount,
@@ -161,8 +165,9 @@ const transfer = async (req, res, next) => {
         return res.status(422).json({msg: "Conta de destino não existe!"})
     }
 
-    if(value > accountSrc.balance){
-        return res.status(422).json({msg: "Saldo insuficiente para realização da transferência!"})
+    const newBalance = accountSrc.balance - value;
+    if(newBalance < -1000){
+        return res.status(422).json({msg: "Saldo insuficiente para realização do Transferência! (limite de saldo negativo -1000)"})
     }
 
     accountSrc.balance -= value;
