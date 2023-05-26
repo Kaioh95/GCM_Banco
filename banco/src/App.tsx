@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import './App.css'
 import { TabContextProvider } from './contexts/TabContext'
 import MainPage from './pages/MainPage'
