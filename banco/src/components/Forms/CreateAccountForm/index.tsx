@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 
 interface CreateValues extends FormikValues{
     accountId: number;
+    balance: number;
 }
 
 function CreateAccountForm(){
@@ -15,6 +16,7 @@ function CreateAccountForm(){
 
     const initialValues={
         accountId: 0,
+        balance: 0,
     }
 
 
@@ -69,7 +71,18 @@ function CreateAccountForm(){
                 placeholder='Digite o número da conta'
                 as={CustomInput}
             />
-            <ErrorMessage component={FormError} name="title"/>
+            <ErrorMessage component={FormError} name="accountId"/>
+
+
+            <CustomLabel>Saldo inicial da Conta:</CustomLabel>
+            <Field
+                name='balance'
+                type='number'
+                placeholder='Digite o saldo da conta'
+                as={CustomInput}
+            />
+            <ErrorMessage component={FormError} name="balance"/>
+
 
             <FormFooter>
                     <SubmitButton

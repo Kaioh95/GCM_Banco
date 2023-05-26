@@ -17,6 +17,10 @@ const createaccount = (req, res, next) => {
         return res.status(400).send({ errors: ['Id inválido!']})
     }
 
+    if(!balance){
+        return res.status(422).json({msg: "Informe o saldo inicial!"})
+    }
+
     Account.findOne({ accountId }, (err, account) => {
         if(err){
             console.log(err)
@@ -24,7 +28,7 @@ const createaccount = (req, res, next) => {
         } else if(account){
             return res.status(400).send({errors: ['A conta já existe!']})
         } else {
-            const newAccount = new Account({ accountId: parseInt(accountId), balance: 0 })
+            const newAccount = new Account({ accountId: parseInt(accountId), balance: balance })
             newAccount.save(err => {
                 if(err){
                     return sendErrorsDB(res, err)
