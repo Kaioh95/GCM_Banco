@@ -1,5 +1,5 @@
 import { ErrorMessage, Field, FormikHelpers, FormikProvider, FormikValues, useFormik } from "formik";
-import { CustomForm, CustomInput, Select, CustomLabel, FormFooter, SubmitButton, FormError, DivResult } from "../styles";
+import { CustomForm, CustomInput, CustomLabel, FormFooter, SubmitButton, FormError, DivResult } from "../styles";
 import { useState } from "react";
 import { useRequest } from "../../../hooks/useResquest";
 import { toast } from "react-toastify";
