@@ -75,7 +75,7 @@ function CreateAccountForm(){
                 placeholder='Digite o número da conta'
                 as={CustomInput}
             />
-            <ErrorMessage component={FormError} name="title"/>
+            <ErrorMessage component={FormError} name="accountId"/>
 
             {formik.values.accountType === "poupanca" || formik.values.accountType === "normal" ? 
                 <Fragment>

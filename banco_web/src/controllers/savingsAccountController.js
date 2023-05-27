@@ -180,7 +180,7 @@ const transfer = async (req, res, next) => {
 
     try{
         if(destType === AccountType.BONUS){
-            accountDest.points += Math.floor(value / 200);
+            accountDest.points += Math.floor(value / 150);
             accountDest.points = parseInt(accountDest.points);
         }
         const updatedAccountDest = await findUpdate(destType == AccountType.BONUS
