@@ -1,12 +1,13 @@
 import { ErrorMessage, Field, FormikHelpers, FormikProvider, FormikValues, useFormik } from "formik";
 import { CreateAccountSchema } from "../../../schemas/CreateAccountSchema";
 import { CustomForm, CustomInput, CustomLabel, FormFooter, SubmitButton, FormError, Select } from "../styles";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { useRequest } from "../../../hooks/useResquest";
 import { toast } from "react-toastify";
 
 interface CreateValues extends FormikValues{
     accountId: number;
+    balance: number;
     accountType: string;
 }
 
@@ -16,6 +17,7 @@ function CreateAccountForm(){
 
     const initialValues={
         accountId: 0,
+        balance: 0,
         accountType: '',
     }
 
@@ -73,7 +75,21 @@ function CreateAccountForm(){
                 placeholder='Digite o número da conta'
                 as={CustomInput}
             />
-            <ErrorMessage component={FormError} name="title"/>
+            <ErrorMessage component={FormError} name="accountId"/>
+
+            {formik.values.accountType === "normal" ?
+                <Fragment>
+                    <CustomLabel>Saldo inicial da Conta:</CustomLabel>
+                    <Field
+                        name='balance'
+                        type='number'
+                        placeholder='Digite o saldo da conta'
+                        as={CustomInput}
+                    />
+                    <ErrorMessage component={FormError} name="balance"/>
+                </Fragment>
+                : null
+            }
 
             <Field
                 name='accountType'

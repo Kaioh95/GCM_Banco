@@ -18,6 +18,10 @@ const createaccount = async (req, res, next) => {
         return res.status(400).send({ errors: ['Id inválido!']})
     }
 
+    if(!balance){
+        return res.status(422).json({msg: "Informe o saldo inicial!"})
+    }
+
     const account = await Account.findOne({ accountId});
 
     if(account){
@@ -25,7 +29,7 @@ const createaccount = async (req, res, next) => {
     }
 
     try{
-        const newAccount = new Account({ accountId: parseInt(accountId), balance: 0, points: 10});
+        const newAccount = new Account({ accountId: parseInt(accountId), balance: balance});
         await newAccount.save()
 
         return res.status(200).json({msg: 'Conta criada!', account: newAccount})
