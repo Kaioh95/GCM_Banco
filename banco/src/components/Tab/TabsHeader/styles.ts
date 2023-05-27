@@ -4,4 +4,5 @@ export const UlTabs = styled.ul`
     list-style-type: none;
     display: flex;
     justify-content: center;
+    padding: 0;
 `;

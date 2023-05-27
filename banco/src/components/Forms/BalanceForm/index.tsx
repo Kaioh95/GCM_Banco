@@ -1,5 +1,5 @@
 import { ErrorMessage, Field, FormikHelpers, FormikProvider, FormikValues, useFormik } from "formik";
-import { CustomForm, CustomInput, CustomLabel, FormFooter, SubmitButton, FormError, DivResult } from "../styles";
+import { CustomForm, CustomInput, Select, CustomLabel, FormFooter, SubmitButton, FormError, DivResult } from "../styles";
 import { useState } from "react";
 import { useRequest } from "../../../hooks/useResquest";
 import { toast } from "react-toastify";
@@ -7,12 +7,14 @@ import { BalanceAccountSchema } from "../../../schemas/BalanceAccountSchema";
 
 interface BalanceValues extends FormikValues{
     accountId: number;
+    accountType: string;
 }
 
 type AccountType = {
     _id: string,
     accountId: string,
     balance: string,
+    points?: string,
 }
 
 function BalanceForm(){
@@ -22,6 +24,7 @@ function BalanceForm(){
 
     const initialValues={
         accountId: 0,
+        accountType: '',
     }
 
 
@@ -44,10 +47,12 @@ function BalanceForm(){
     const BalanceAccount = async (data: BalanceValues, headers: any) => {
         setIsBalanceLoading(true);
         const customErrorMessage = 'Erro ao acessar conta!';
+        const customURL = data.accountType === "normal" ? `/${data.accountId}` 
+            : `/${data.accountType}/${data.accountId}`;
 
         const response = await runRequest<{msg: string, account: AccountType}>(
-            `/${data.accountId}`,
-            'get',
+            customURL,
+            `get`,
             undefined,
             undefined,
             headers,
@@ -61,7 +66,8 @@ function BalanceForm(){
         }
 
         console.log(response)
-        setResultMsg(`Conta: ${response.account.accountId} | Saldo: ${response.account.balance}`)
+        const resultPoints = response.account.points ? `| Points: ${response.account.points}` : ''
+        setResultMsg(`Conta: ${response.account.accountId} | Saldo: ${response.account.balance} ` + resultPoints)
 
         return { success: response.msg, error: undefined }
     }
@@ -84,6 +90,17 @@ function BalanceForm(){
                     as={CustomInput}
                 />
                 <ErrorMessage component={FormError} name="accountId"/>
+                <Field
+                    name='accountType'
+                    type='input'
+                    as={Select}
+                    placeholder='Escolha o tipo de conta!'>
+                    <option value="">Selecione o tipo</option>
+                    <option value="normal">Normal</option>
+                    <option value="bonus">Bônus</option>
+                    <option value="poupanca">Poupança</option>
+                </Field>
+                <ErrorMessage component={FormError} name="accountType"/>
 
                 <FormFooter>
                         <SubmitButton

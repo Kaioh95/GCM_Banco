@@ -7,17 +7,25 @@ export const CustomForm = styled(Form)`
     border: 1px solid grey;
     border-radius: 8px;
     box-sizing: border-box;
+    padding: 10px;
     outline: 0;
 `;
 
 export const CustomLabel = styled.label`
     color: #f0f8ff;
     margin-right: 20px;
+    display: block;
+`;
+
+export const Select = styled.select`
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    line-height: 35px;
 `;
 
 export const CustomInput = styled.input`
     box-sizing: border-box;
-    width: 90%;
+    width: 100%;
     line-height: 35px;
     padding-left: 15px;
     margin: 10px 0;
@@ -53,7 +61,7 @@ export const CustomInput = styled.input`
 `;
 
 export const FormFooter = styled.div`
-    padding: 5px 15px;
+    padding: 5px 0px;
     display: flex;
     justify-content: end;
 `;
@@ -96,4 +104,5 @@ export const DivResult = styled.div`
     color: #00ff00;
     border: 0;
     margin: 10px;
-`
+    text-align: center;
+`;

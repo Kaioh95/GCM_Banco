@@ -1,13 +1,17 @@
 import { ErrorMessage, Field, FormikHelpers, FormikProvider, FormikValues, useFormik } from "formik";
 import { CreateAccountSchema } from "../../../schemas/CreateAccountSchema";
-import { CustomForm, CustomInput, CustomLabel, FormFooter, SubmitButton, FormError } from "../styles";
-import { useState } from "react";
+import { CustomForm, CustomInput, CustomLabel, FormFooter, SubmitButton, FormError, Select } from "../styles";
+import { Fragment, useState } from "react";
 import { useRequest } from "../../../hooks/useResquest";
 import { toast } from "react-toastify";
 
 interface CreateValues extends FormikValues{
     accountId: number;
     balance: number;
+<<<<<<< HEAD
+=======
+    accountType: string;
+>>>>>>> release/rc-2.1
 }
 
 function CreateAccountForm(){
@@ -17,6 +21,10 @@ function CreateAccountForm(){
     const initialValues={
         accountId: 0,
         balance: 0,
+<<<<<<< HEAD
+=======
+        accountType: '',
+>>>>>>> release/rc-2.1
     }
 
 
@@ -39,9 +47,11 @@ function CreateAccountForm(){
     const createAccount = async (data: CreateValues, headers: any) => {
         setIsCreateLoading(true);
         const customErrorMessage = 'Erro ao criar conta!';
-
+        const customURL = data.accountType === "normal" ? "/" 
+            : `/${data.accountType}`;
+        
         const response = await runRequest<{msg: string}>(
-            '/',
+            customURL,
             'post',
             undefined,
             data,
@@ -73,16 +83,31 @@ function CreateAccountForm(){
             />
             <ErrorMessage component={FormError} name="accountId"/>
 
+            {formik.values.accountType === "normal" ?
+                <Fragment>
+                    <CustomLabel>Saldo inicial da Conta:</CustomLabel>
+                    <Field
+                        name='balance'
+                        type='number'
+                        placeholder='Digite o saldo da conta'
+                        as={CustomInput}
+                    />
+                    <ErrorMessage component={FormError} name="balance"/>
+                </Fragment>
+                : null
+            }
 
-            <CustomLabel>Saldo inicial da Conta:</CustomLabel>
             <Field
-                name='balance'
-                type='number'
-                placeholder='Digite o saldo da conta'
-                as={CustomInput}
-            />
-            <ErrorMessage component={FormError} name="balance"/>
-
+                name='accountType'
+                type='input'
+                as={Select}
+                placeholder='Escolha o tipo de conta!'>
+                <option value="">Selecione o tipo</option>
+                <option value="normal">Normal</option>
+                <option value="bonus">Bônus</option>
+                <option value="poupanca">Poupança</option>
+            </Field>
+            <ErrorMessage component={FormError} name="accountType"/>
 
             <FormFooter>
                     <SubmitButton
