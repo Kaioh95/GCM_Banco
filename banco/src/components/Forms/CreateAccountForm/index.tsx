@@ -8,10 +8,7 @@ import { toast } from "react-toastify";
 interface CreateValues extends FormikValues{
     accountId: number;
     balance: number;
-<<<<<<< HEAD
-=======
     accountType: string;
->>>>>>> release/rc-2.1
 }
 
 function CreateAccountForm(){
@@ -21,10 +18,7 @@ function CreateAccountForm(){
     const initialValues={
         accountId: 0,
         balance: 0,
-<<<<<<< HEAD
-=======
         accountType: '',
->>>>>>> release/rc-2.1
     }
 
 
