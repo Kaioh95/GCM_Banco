@@ -35,7 +35,7 @@ describe('Conta Simples', async () => {
         const response = await accountController.createaccount(req, res);
 
         assert(response.statusCode, 200);
-    }).timeout(50000);
+    }).timeout(30000);
 
     it('Cadastrar conta simples 2', async function(){
         const req = httpMocks.createRequest({
@@ -84,7 +84,7 @@ describe('Conta Bônus', async () => {
         const response = await bonusAccountController.createAccount(req, res);
 
         assert(response.statusCode, 200);
-    });
+    }).timeout(30000);
 
     it('Cadastrar conta bônus 2', async function(){
         const req = httpMocks.createRequest({
@@ -130,7 +130,7 @@ describe('Conta Poupança', async () => {
         const response = await savingsAccountController.createAccount(req, res);
 
         assert(response.statusCode, 200);
-    });
+    }).timeout(30000);
 
     it('Cadastrar conta poupança 2', async function(){
         const req = httpMocks.createRequest({
@@ -169,7 +169,7 @@ describe('Operações de Crédito', async () => {
         const req = httpMocks.createRequest({
             body: {
                 accountId: 191,
-                credits: 25,
+                credits: 50,
             }
         });
         const res = httpMocks.createResponse();
@@ -179,8 +179,8 @@ describe('Operações de Crédito', async () => {
         const data = response._getJSONData();
         data.should.have.property('updatedAccount');
         assert.equal(data.updatedAccount.accountId, "191");
-        assert.equal(data.updatedAccount.balance, 125);
-    });
+        assert.equal(data.updatedAccount.balance, 150);
+    }).timeout(30000);
 
     it('Crédito Parâmetro Negativo', async function(){
         const req = httpMocks.createRequest({
@@ -277,8 +277,8 @@ describe('Operações de Débito', async () => {
         const data = response._getJSONData();
         data.should.have.property('updatedAccount');
         assert.equal(data.updatedAccount.accountId, "191");
-        assert.equal(data.updatedAccount.balance, 100);
-    });
+        assert.equal(data.updatedAccount.balance, 125);
+    }).timeout(30000);
 
     it('Débito Parâmetro Negativo', async function(){
         const req = httpMocks.createRequest({
@@ -394,7 +394,7 @@ describe('Operações de Transferência', async () => {
             body: {
                 accountIdSrc: 191,
                 accountIdDest: 192,
-                value: 50,
+                value: 25,
                 destType: "NORMAL",
             }
         });
@@ -405,8 +405,8 @@ describe('Operações de Transferência', async () => {
         const data = response._getJSONData();
         data.should.have.property('updatedAccountDest');
         assert.equal(data.updatedAccountDest.accountId, "192");
-        assert.equal(data.updatedAccountDest.balance, 550);
-    });
+        assert.equal(data.updatedAccountDest.balance, 525);
+    }).timeout(30000);
 
     it('Transferência Parâmetro Negativo', async function(){
         const req = httpMocks.createRequest({
@@ -527,6 +527,122 @@ describe('Operações de Transferência', async () => {
         expect(response.statusCode).to.not.equal(200);
     });
 
+    it('Transferência NORMAL -> BONUS', async function(){
+        const req = httpMocks.createRequest({
+            body: {
+                accountIdSrc: 191,
+                accountIdDest: 291,
+                value: 50,
+                destType: "BONUS",
+            }
+        });
+        const res = httpMocks.createResponse();
+
+        const response = await accountController.transfer(req, res);
+
+        const data = response._getJSONData();
+        data.should.have.property('updatedAccountDest');
+        assert.equal(data.updatedAccountDest.accountId, "291");
+        assert.equal(data.updatedAccountDest.balance, 250);
+        assert.equal(data.updatedAccountDest.points, 15);
+    });
+
+    it('Transferência NORMAL -> SAVINGS', async function(){
+        const req = httpMocks.createRequest({
+            body: {
+                accountIdSrc: 191,
+                accountIdDest: 391,
+                value: 50,
+                destType: "SAVINGS",
+            }
+        });
+        const res = httpMocks.createResponse();
+
+        const response = await accountController.transfer(req, res);
+
+        const data = response._getJSONData();
+        data.should.have.property('updatedAccountDest');
+        assert.equal(data.updatedAccountDest.accountId, "391");
+        assert.equal(data.updatedAccountDest.balance, 250);
+    });
+
+    it('Transferência BONUS -> NORMAL', async function(){
+        const req = httpMocks.createRequest({
+            body: {
+                accountIdSrc: 291,
+                accountIdDest: 191,
+                value: 25,
+                destType: "NORMAL",
+            }
+        });
+        const res = httpMocks.createResponse();
+
+        const response = await bonusAccountController.transfer(req, res);
+
+        const data = response._getJSONData();
+        data.should.have.property('updatedAccountDest');
+        assert.equal(data.updatedAccountDest.accountId, "191");
+        assert.equal(data.updatedAccountDest.balance, 25);
+    });
+
+    it('Transferência BONUS -> SAVINGS', async function(){
+        const req = httpMocks.createRequest({
+            body: {
+                accountIdSrc: 291,
+                accountIdDest: 391,
+                value: 25,
+                destType: "SAVINGS",
+            }
+        });
+        const res = httpMocks.createResponse();
+
+        const response = await bonusAccountController.transfer(req, res);
+
+        const data = response._getJSONData();
+        data.should.have.property('updatedAccountDest');
+        assert.equal(data.updatedAccountDest.accountId, "391");
+        assert.equal(data.updatedAccountDest.balance, 275);
+    });
+
+    it('Transferência SAVINGS -> NORMAL', async function(){
+        const req = httpMocks.createRequest({
+            body: {
+                accountIdSrc: 391,
+                accountIdDest: 191,
+                value: 50,
+                destType: "NORMAL",
+            }
+        });
+        const res = httpMocks.createResponse();
+
+        const response = await savingsAccountController.transfer(req, res);
+
+        const data = response._getJSONData();
+        data.should.have.property('updatedAccountDest');
+        assert.equal(data.updatedAccountDest.accountId, "191");
+        assert.equal(data.updatedAccountDest.balance, 75);
+    });
+
+    it('Transferência SAVINGS -> BONUS', async function(){
+        const req = httpMocks.createRequest({
+            body: {
+                accountIdSrc: 391,
+                accountIdDest: 291,
+                value: 25,
+                destType: "BONUS",
+            }
+        });
+        const res = httpMocks.createResponse();
+
+        const response = await savingsAccountController.transfer(req, res);
+
+        const data = response._getJSONData();
+        data.should.have.property('updatedAccountDest');
+        assert.equal(data.updatedAccountDest.accountId, "291");
+        assert.equal(data.updatedAccountDest.balance, 225);
+        assert.equal(data.updatedAccountDest.points, 15);
+    });
+
 });
 
 describe('Operações de Render Juros', async () => {
@@ -545,7 +661,7 @@ describe('Operações de Render Juros', async () => {
         data.should.have.property('account');
         assert.equal(data.account.accountId, "391");
         assert.equal(data.account.balance, 240);
-    }).timeout(50000);
+    }).timeout(30000);
 
     it('Render Juros Conta 2', async function(){
         const req = httpMocks.createRequest({
