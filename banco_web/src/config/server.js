@@ -16,3 +16,4 @@ server.use('/api', Routes)
 server.listen(port, function(){
     console.log(`BACKEND is running in port ${port}`)
 })
+module.exports = server;
