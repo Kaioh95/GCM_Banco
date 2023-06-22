@@ -26,6 +26,7 @@
     "mocha": "10.2.0",
     "node-mocks-http": "1.12.2",
     "nodemon": "^2.0.22",
-    "supertest": "^6.3.3"
+    "supertest": "^6.3.3",
+    "swagger-autogen": "^2.23.2"
   }
 }
