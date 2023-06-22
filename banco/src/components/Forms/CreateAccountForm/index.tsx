@@ -77,7 +77,7 @@ function CreateAccountForm(){
             />
             <ErrorMessage component={FormError} name="accountId"/>
 
-            {formik.values.accountType === "normal" ?
+            {formik.values.accountType === "poupanca" || formik.values.accountType === "normal" ? 
                 <Fragment>
                     <CustomLabel>Saldo inicial da Conta:</CustomLabel>
                     <Field

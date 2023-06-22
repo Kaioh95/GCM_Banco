@@ -6,12 +6,15 @@ const Account = require('../models/Account');
 const createAccount = async (req, res, next) => {
     const accountId = req.body.accountId || '';
     const balance = req.body.balance;
-    const points = req.body.points;
 
     try{
         parseInt(accountId)
     } catch(err){
         return res.status(400).send({ errors: ['Id inválido!']});
+    }
+
+    if(!balance){
+        return res.status(422).json({msg: "Informe o saldo inicial!"})
     }
 
     const bAccount = await SavingsAccount.findOne({ accountId});
@@ -21,7 +24,7 @@ const createAccount = async (req, res, next) => {
     }
 
     try{
-        const newSAccount = new SavingsAccount({ accountId: parseInt(accountId), balance: 0, points: 10});
+        const newSAccount = new SavingsAccount({ accountId: parseInt(accountId), balance: balance});
         await newSAccount.save()
 
         return res.status(200).json({msg: 'Conta poupança criada!', account: newSAccount})
