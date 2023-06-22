@@ -5,8 +5,9 @@
   "main": "src/loader.js",
   "scripts": {
     "dev": "nodemon",
+    "build": "rm -rf dist && webpack --mode=production",
     "test": "mocha 'test/**/*.js' --recursive --timeout 60000 --exit",
-    "start": "node src/loader.js",
+    "start": "node dist/bundle.js",
     "swagger-autogen": "node src/routes/swagger.js"
   },
   "keywords": [],
@@ -27,6 +28,9 @@
     "node-mocks-http": "1.12.2",
     "nodemon": "^2.0.22",
     "supertest": "^6.3.3",
-    "swagger-autogen": "^2.23.2"
+    "swagger-autogen": "^2.23.2",
+    "webpack": "^5.88.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-node-externals": "^3.0.0"
   }
 }
