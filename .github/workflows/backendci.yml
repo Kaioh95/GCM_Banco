@@ -14,7 +14,7 @@ jobs:
     
     defaults:
       run:
-        working-directory: 'banco_web'
+        working-directory: './banco_web'
     strategy:
       matrix:
         node-version: [16.x]
