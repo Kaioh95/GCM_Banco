@@ -1,0 +1,26 @@
+version: "3"
+services:
+  banco-api:
+    container_name: banco-container
+    image: kaioh95/back-img
+    restart: always
+    build: .
+    enviroment:
+      PORT: 3003
+      DB_URL: mongodb://banco-db:27017
+      FRONT_URL: banco-front
+    ports:
+      - "3003:3003"
+    links:
+      - mongo_db
+  mongo_db:
+    container_name: mongo_container
+    image: mongo
+    restart: always
+    volumes:
+      - volume-mongo:/data/db
+    ports:
+      - '27017:27017'
+  
+  volumes:
+    mongo_db: {}
