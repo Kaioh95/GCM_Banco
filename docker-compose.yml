@@ -1,0 +1,59 @@
+version: "3.9"
+services:
+  banco-db:
+    image: mongo
+    restart: always
+    container_name: banco-db
+    volumes:
+      - volume-mongo:/data/db
+    ports:
+      - '27017:27017'
+    networks:
+      - banco-network
+
+  banco-api:
+    build:
+      context: ./banco_web
+      dockerfile: Dockerfile
+    container_name: banco-api
+    image: banco-back-img
+    restart: always
+    #enviroment:
+    #  PORT: 8080
+    #  DB_URL: mongodb://banco-db:27017
+    #  FRONT_URL: banco-front
+    ports:
+      - "8080:8080"
+    depends_on:
+      - banco-db
+    networks:
+      - banco-network
+
+  banco-f:
+    build:
+      context: ./banco
+      dockerfile: Dockerfile
+    container_name: banco-f
+    image: banco-front-img
+    restart: always
+    #enviroment:
+    #  VITE_BACK: http://banco-api:8080
+    ports:
+      - 5173:5173
+    depends_on:
+      - banco-api
+    networks:
+      - banco-network
+
+volumes:
+  volume-mongo:
+
+networks:
+  banco-network:
+    name: banco-net
+    external: true
+
+#volumes:
+#  volume-mongo:
+#    name: volume-mogo
+#    external: true

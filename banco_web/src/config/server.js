@@ -10,7 +10,7 @@ const swaggerFile = require('../routes/swagger_output.json')
 
 server.use(express.urlencoded({extended: true}))
 server.use(express.json())
-server.use(cors({ credentials: true, origin: process.env.FRONT_URL || 'http://localhost:3000'}))
+server.use(cors({ credentials: true, origin: '*'}))
 
 const Routes = require('../routes/routes')
 server.use('/api', Routes)
