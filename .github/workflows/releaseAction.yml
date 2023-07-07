@@ -40,7 +40,8 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: node-app
-        path: release.zip
+        path: banco_web/release.zip
+        retention-days: 60
   
   build-front:
 
@@ -72,4 +73,5 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: vite-web-app
-        path: releasefront.zip
+        path: banco/releasefront.zip
+        retention-days: 60
