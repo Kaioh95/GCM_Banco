@@ -1,5 +1,15 @@
 {
     "extends": [
         "eslint:recommended"
-    ]
+    ],
+    "parserOptions": {
+        "ecmaVersion": 12
+    },
+    "env": {
+        "es6": true
+    },
+    "rules": {
+        "no-unused-vars": 0,
+        "no-undef": 0
+    }
 }
