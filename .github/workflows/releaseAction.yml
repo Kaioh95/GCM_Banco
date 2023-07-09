@@ -1,0 +1,77 @@
+name: Release Action
+
+on:
+  push:
+    tags:
+        - 'rc-[0-9]+.[0-9]+.?[0-9]*'
+  pull_request:
+    tags:
+        - 'rc-[0-9]+.[0-9]+.?[0-9]*'
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: './banco_web'
+    strategy:
+      matrix:
+        node-version: [16.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Backend build Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: 'banco_web/package-lock.json'
+    - run: npm ci
+    - run: npm run build --if-present
+    - run: npm run lint
+    - run: npm test
+
+    - name: Zip artifact for deployment
+      run: zip release.zip ./dist/* -r
+
+    - name: Upload artifact for deployment
+      uses: actions/upload-artifact@v3
+      with:
+        name: node-app
+        path: banco_web/release.zip
+        retention-days: 60
+  
+  build-front:
+
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: './banco'
+    strategy:
+      matrix:
+        node-version: [16.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Frontend build Vite ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: 'banco/package-lock.json'
+    - run: npm ci
+    - run: npm run build
+
+    - name: Zip frontend artifact for deployment
+      run: zip releasefront.zip ./dist/* -r
+
+    - name: Upload frontend artifact for deployment
+      uses: actions/upload-artifact@v3
+      with:
+        name: vite-web-app
+        path: banco/releasefront.zip
+        retention-days: 60
