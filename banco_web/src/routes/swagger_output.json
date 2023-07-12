@@ -2,10 +2,12 @@
   "swagger": "2.0",
   "info": {
     "version": "1.0.0",
-    "title": "REST API",
-    "description": ""
+    "title": "GERÊNCIA DE CONFIGURAÇÃO E MUDANÇAS [2023.1]",
+    "description": "Desenvolvimento de sistema bancário\nGrupo:\nAlexandre Dantas dos Santos\nDouglas Alexandre dos Santos\nKaio Henrique de Souza",
+    "name": ""
+    
   },
-  "host": "localhost:3000",
+  "host": "localhost:3003",
   "basePath": "/",
   "schemes": [
     "http"
@@ -13,7 +15,9 @@
   "paths": {
     "/": {
       "post": {
-        "description": "",
+        "tags": ["Conta Simples"],
+        "summary": "Criar nova conta",
+        "description": "Solicita um número de conta e um saldo inicial e cria uma conta com este número e saldo",
         "parameters": [
           {
             "name": "body",
@@ -52,7 +56,9 @@
     },
     "/all": {
       "get": {
-        "description": "",
+        "tags": ["Conta Simples"],
+        "summary": "Listar contas",
+        "description": "Lista todas as contas criadas",
         "parameters": [],
         "responses": {
           "200": {
@@ -66,7 +72,9 @@
     },
     "/{id}": {
       "get": {
-        "description": "",
+        "tags": ["Conta Simples"],
+        "summary": "Detalhes da conta",
+        "description": "Solicita um número de conta e exibe o saldo da conta",
         "parameters": [
           {
             "name": "id",
@@ -87,7 +95,10 @@
     },
     "/credito": {
       "patch": {
-        "description": "",
+        "tags": ["Conta Simples"],
+        "summary": "Deposito na conta",
+        "title": "teste",
+        "description": "Solicita um número da conta e valor para atualiza a conta informada acrescentando o valor informado ao saldo",
         "parameters": [
           {
             "name": "body",
@@ -120,7 +131,9 @@
     },
     "/debito": {
       "patch": {
-        "description": "",
+        "tags": ["Conta Simples"],
+        "summary": "Saque na conta",
+        "description": "Solicita um número e valor e atualiza a conta informada subtraindo o valor informado ao saldo",
         "parameters": [
           {
             "name": "body",
@@ -153,7 +166,9 @@
     },
     "/transferir": {
       "patch": {
-        "description": "",
+        "tags": ["Conta Simples"],
+        "summary": "Transferir entre contas conta",
+        "description": "Solicita o número de conta de origem, número de conta de destino e valor a ser transferido; realiza o débito da conta de origem e o crédito na conta destino",
         "parameters": [
           {
             "name": "body",
@@ -192,7 +207,9 @@
     },
     "/bonus": {
       "post": {
-        "description": "",
+        "tags": ["Conta Bonus"],
+        "summary": "Criar nova conta bonus",
+        "description": "Criação de uma conta bonus. Esta conta possui um atributo adicional do tipo Inteiro que contabiliza a pontuação do cliente.",
         "parameters": [
           {
             "name": "body",
@@ -231,7 +248,9 @@
     },
     "/bonus/all": {
       "get": {
-        "description": "",
+        "tags": ["Conta Bonus"],
+        "summary": "Listar contas bonus",
+        "description": "Lista todas as contas bonus",
         "parameters": [],
         "responses": {
           "200": {
@@ -245,7 +264,9 @@
     },
     "/bonus/{id}": {
       "get": {
-        "description": "",
+        "tags": ["Conta Bonus"],
+        "summary": "Deposito na conta bonus",
+        "description": "Solicita um número de conta e exibe o saldo da conta",
         "parameters": [
           {
             "name": "id",
@@ -266,7 +287,9 @@
     },
     "/bonus/credito": {
       "patch": {
-        "description": "",
+        "tags": ["Conta Bonus"],
+        "summary": "Deposito na conta bonus",
+        "description": "Deposito na conta bonus. 1 ponto para cada R$ 100,00 de depósito",
         "parameters": [
           {
             "name": "body",
@@ -299,7 +322,9 @@
     },
     "/bonus/debito": {
       "patch": {
-        "description": "",
+        "tags": ["Conta Bonus"],
+        "summary": "Saque na conta bonus",
+        "description": "Solicita um número e valor e atualiza a conta informada subtraindo o valor informado ao saldo",
         "parameters": [
           {
             "name": "body",
@@ -332,7 +357,9 @@
     },
     "/bonus/transferir": {
       "patch": {
-        "description": "",
+        "tags": ["Conta Bonus"],
+        "summary": "Transferir entre contas conta",
+        "description": "Transferir saldo, 1 ponto para cada R$ 200,00 recebidos",
         "parameters": [
           {
             "name": "body",
@@ -374,7 +401,9 @@
     },
     "/poupanca": {
       "post": {
-        "description": "",
+        "tags": ["Conta Poupança"],
+        "summary": "Criar nova conta poupança",
+        "description": "Criação de uma conta poupança. Existe uma operação adicional que pode ser feita APENAS para este tipo de conta: renderJuros",
         "parameters": [
           {
             "name": "body",
@@ -413,7 +442,9 @@
     },
     "/poupanca/all": {
       "get": {
-        "description": "",
+        "tags": ["Conta Poupança"],
+        "summary": "Listar contas poupanças",
+        "description": "Lista todas as contas poupança",
         "parameters": [],
         "responses": {
           "200": {
@@ -427,7 +458,9 @@
     },
     "/poupanca/{id}": {
       "get": {
-        "description": "",
+        "tags": ["Conta Poupança"],
+        "summary": "Deposito na conta poupança",
+        "description": "Solicita um número de conta e exibe o saldo da conta",
         "parameters": [
           {
             "name": "id",
@@ -448,7 +481,9 @@
     },
     "/poupanca/credito": {
       "patch": {
-        "description": "",
+        "tags": ["Conta Poupança"],
+        "summary": "Deposito na conta poupança",
+        "description": "Solicita um número da conta e valor para atualiza a conta informada acrescentando o valor informado ao saldo",
         "parameters": [
           {
             "name": "body",
@@ -481,7 +516,9 @@
     },
     "/poupanca/debito": {
       "patch": {
-        "description": "",
+        "tags": ["Conta Poupança"],
+        "summary": "Saque na conta poupança",
+        "description": "Solicita um número e valor e atualiza a conta informada subtraindo o valor informado ao saldo",
         "parameters": [
           {
             "name": "body",
@@ -514,7 +551,9 @@
     },
     "/poupanca/transferir": {
       "patch": {
-        "description": "",
+        "tags": ["Conta Poupança"],
+        "summary": "Transferir entre contas conta",
+        "description": "Transferência entre contas",
         "parameters": [
           {
             "name": "body",
@@ -556,7 +595,9 @@
     },
     "/poupanca/renderjuros": {
       "patch": {
-        "description": "",
+        "tags": ["Conta Poupança"],
+        "summary": "Render juros",
+        "description": "Função usada para render juros da conta poupança",
         "parameters": [
           {
             "name": "body",
