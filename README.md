@@ -103,4 +103,4 @@ docker push YOUR-USER-NAME/banco-back-img
 ```
 
 # 2. Docker Compose
-Com o docker compose é possível fazer o build das imagens e iniciá-las em um comando só. Usando este projeto como exemplo, execute os passos 1.1 à 1.5 e com o terminal na pasta raiz do projeto onde é possível encontrar um arquivo chamado **docker-compose.yml** execute o comando `docker-compose up`. Você pode usar o comando `docker-compose down` caso queira para e remover os containers.
+Com o docker compose é possível fazer o build das imagens e iniciá-las em um comando só. Usando este projeto como exemplo, execute os passos 1.1 à 1.5 e com o terminal na pasta raiz do projeto onde é possível encontrar um arquivo chamado **docker-compose.yml** execute o comando `docker-compose up`. Você pode usar o comando `docker-compose down` caso queira para e remover os containers.Olá Mundo!
